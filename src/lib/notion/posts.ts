@@ -3,11 +3,7 @@ import { getPageContent } from "./blocks";
 import type { Post, Locale, Category, PostStatus } from "@/lib/data/types";
 import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
-/**
- * Find a property by name (case-insensitive) from a Notion page
- */
 function findProp(props: PageObjectResponse["properties"], name: string) {
-  // Try exact match first, then case-insensitive
   if (props[name]) return props[name];
   const key = Object.keys(props).find(
     (k) => k.toLowerCase() === name.toLowerCase()
@@ -15,14 +11,12 @@ function findProp(props: PageObjectResponse["properties"], name: string) {
   return key ? props[key] : undefined;
 }
 
-/** Normalize language value: "Zh"/"zh"/"ZH" → "zh" */
 function normalizeLocale(val: string): Locale {
   const lower = val.toLowerCase();
   if (lower === "zh" || lower === "en") return lower as Locale;
   return "zh";
 }
 
-/** Normalize status value: "published"/"Published" → "Published" */
 function normalizeStatus(val: string): PostStatus {
   if (val.toLowerCase() === "published") return "Published";
   return "Draft";
@@ -104,10 +98,11 @@ function extractPostProps(page: PageObjectResponse): Omit<Post, "content"> {
 }
 
 /**
- * Fetch ALL posts from Notion (no filter), then filter in code.
- * This avoids issues with select option casing mismatches.
+ * FAST: Fetch post metadata only (no content blocks).
+ * Used by list pages, home page, sitemap — anything that doesn't need article body.
+ * Single API call, returns in ~200ms.
  */
-async function fetchAllPosts(): Promise<Post[]> {
+async function fetchPostsMeta(): Promise<Omit<Post, "content">[]> {
   const allPages: PageObjectResponse[] = [];
   let cursor: string | undefined = undefined;
 
@@ -120,42 +115,50 @@ async function fetchAllPosts(): Promise<Post[]> {
     cursor = response.has_more ? response.next_cursor ?? undefined : undefined;
   } while (cursor);
 
-  const posts: Post[] = [];
-  for (const page of allPages) {
-    const props = extractPostProps(page);
-    const content = await getPageContent(page.id);
-    posts.push({ ...props, content });
-  }
-  return posts;
+  return allPages.map(extractPostProps);
+}
+
+/**
+ * SLOW: Fetch a single post WITH full content blocks.
+ * Only used by the article detail page.
+ */
+async function fetchSinglePost(
+  pageId: string,
+  meta: Omit<Post, "content">
+): Promise<Post> {
+  const content = await getPageContent(pageId);
+  return { ...meta, content };
 }
 
 // ─── Exported API ───
 
 export async function getNotionPosts(locale: Locale): Promise<Post[]> {
-  const all = await fetchAllPosts();
-  return all
+  const metas = await fetchPostsMeta();
+  return metas
     .filter((p) => p.language === locale && p.status === "Published")
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .map((m) => ({ ...m, content: [] })); // List pages don't need content
 }
 
 export async function getNotionPostBySlug(
   slug: string,
   locale: Locale
 ): Promise<Post | null> {
-  const all = await fetchAllPosts();
-  return (
-    all.find(
-      (p) =>
-        p.slug === slug && p.language === locale && p.status === "Published"
-    ) ?? null
+  const metas = await fetchPostsMeta();
+  const meta = metas.find(
+    (p) =>
+      p.slug === slug && p.language === locale && p.status === "Published"
   );
+  if (!meta) return null;
+  // Only fetch content blocks for THIS one post
+  return fetchSinglePost(meta.id, meta);
 }
 
 export async function getAllNotionPublishedSlugs(): Promise<
   { slug: string; locale: Locale }[]
 > {
-  const all = await fetchAllPosts();
-  return all
+  const metas = await fetchPostsMeta();
+  return metas
     .filter((p) => p.status === "Published")
     .map((p) => ({ slug: p.slug, locale: p.language }));
 }
