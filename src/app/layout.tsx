@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { CursorTrail } from "@/components/ui/CursorTrail";
 import { FallingPetals } from "@/components/ui/FallingPetals";
 import "./globals.css";
@@ -51,6 +52,7 @@ export default function RootLayout({
         <CursorTrail />
         <FallingPetals count={45} />
         {children}
+        <Analytics />
       </body>
     </html>
   );
