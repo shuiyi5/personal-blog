@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ImageIcon, Music, Video, Palette } from "lucide-react";
+import Image from "next/image";
 import type { GalleryItem } from "@/lib/data/types";
 import { Lightbox } from "./Lightbox";
 import { AudioPlayer } from "./AudioPlayer";
@@ -17,28 +18,22 @@ const typeIcons = {
 export function GalleryCard({ item }: { item: GalleryItem }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const Icon = typeIcons[item.type];
+  const isClickable = item.type === "Image" || item.type === "Design";
 
   return (
     <>
       <SpotlightCard className="glass-card gradient-border rounded-2xl overflow-hidden group">
-        {/* Cover / Preview */}
+        {/* Cover / Preview — uses next/image for caching */}
         {item.cover ? (
           <div
-            className={
-              item.type === "Image"
-                ? "cursor-pointer"
-                : ""
-            }
-            onClick={() => {
-              if (item.type === "Image" && (item.mediaUrl || item.cover)) {
-                setLightboxOpen(true);
-              }
-            }}
+            className={isClickable ? "cursor-pointer" : ""}
+            onClick={() => isClickable && setLightboxOpen(true)}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={item.cover}
               alt={item.name}
+              width={600}
+              height={400}
               className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
             />
           </div>
@@ -49,7 +44,6 @@ export function GalleryCard({ item }: { item: GalleryItem }) {
         )}
 
         <div className="p-4">
-          {/* Type badge + name */}
           <div className="flex items-center gap-2 mb-1">
             <Icon size={14} className="text-accent/60" />
             <span className="text-xs text-accent/60">{item.type}</span>
@@ -61,7 +55,6 @@ export function GalleryCard({ item }: { item: GalleryItem }) {
             {item.description}
           </p>
 
-          {/* Tags */}
           {item.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
               {item.tags.map((tag) => (
@@ -107,25 +100,20 @@ export function GalleryCard({ item }: { item: GalleryItem }) {
             </div>
           )}
 
-          {/* Image: click hint */}
-          {item.type === "Image" && (item.mediaUrl || item.cover) && (
+          {/* Image: click to open detail */}
+          {isClickable && (item.mediaUrl || item.cover) && (
             <button
               onClick={() => setLightboxOpen(true)}
               className="mt-3 text-xs text-accent/60 hover:text-accent transition-colors"
             >
-              {item.language === "zh" ? "点击查看大图" : "Click to view full size"}
+              {item.language === "zh" ? "点击查看大图 →" : "View full size →"}
             </button>
           )}
         </div>
       </SpotlightCard>
 
-      {/* Lightbox for images */}
       {lightboxOpen && (
-        <Lightbox
-          src={item.mediaUrl || item.cover || ""}
-          alt={item.name}
-          onClose={() => setLightboxOpen(false)}
-        />
+        <Lightbox item={item} onClose={() => setLightboxOpen(false)} />
       )}
     </>
   );
