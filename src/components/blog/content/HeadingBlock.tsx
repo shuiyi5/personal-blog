@@ -9,7 +9,11 @@ export function HeadingBlock({ block }: { block: HeadingBlockType }) {
   };
 
   return (
-    <Tag id={block.id} className={sizes[block.level]}>
+    <Tag
+      id={block.id}
+      className={sizes[block.level]}
+      style={{ scrollMarginTop: "6rem" }}
+    >
       {block.text}
     </Tag>
   );
