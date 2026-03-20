@@ -10,31 +10,49 @@ export interface TocItem {
   level: number;
 }
 
+/**
+ * Find a heading element in the DOM by its id.
+ * Falls back to text-content matching if getElementById fails.
+ */
+function findHeadingElement(item: TocItem): HTMLElement | null {
+  // Primary: exact id match
+  const byId = document.getElementById(item.id);
+  if (byId) return byId;
+
+  // Fallback: find heading by text content
+  const headings = document.querySelectorAll("h1, h2, h3");
+  for (const h of headings) {
+    if (h.textContent?.trim() === item.text.trim()) {
+      return h as HTMLElement;
+    }
+  }
+  return null;
+}
+
 function useActiveHeading(items: TocItem[]) {
-  const [activeId, setActiveId] = useState<string>("");
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (items.length === 0) return;
 
     function onScroll() {
       const OFFSET = 120;
-      let current = items[0]?.id ?? "";
+      let currentIdx = 0;
 
-      // Walk all headings, pick the last one whose top is above the offset
-      for (const item of items) {
-        const el = document.getElementById(item.id);
+      for (let i = 0; i < items.length; i++) {
+        const el = findHeadingElement(items[i]);
         if (!el) continue;
         if (el.getBoundingClientRect().top <= OFFSET) {
-          current = item.id;
+          currentIdx = i;
         }
       }
 
-      // If scrolled to bottom, activate last item
+      // Bottom of page → last item
       if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 50) {
-        current = items[items.length - 1].id;
+        currentIdx = items.length - 1;
       }
 
-      setActiveId(current);
+      setActiveIndex(currentIdx);
     }
 
     onScroll();
@@ -42,7 +60,7 @@ function useActiveHeading(items: TocItem[]) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [items]);
 
-  return activeId;
+  return activeIndex;
 }
 
 function useReadingProgress() {
@@ -62,54 +80,57 @@ function useReadingProgress() {
   return progress;
 }
 
-function scrollToHeading(id: string) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
 interface TocNavProps {
   items: TocItem[];
-  activeId: string;
+  activeIndex: number;
   onAfterClick?: () => void;
-  autoScroll?: boolean;
+  syncScroll?: boolean;
 }
 
-function TocNav({ items, activeId, onAfterClick, autoScroll }: TocNavProps) {
+function TocNav({ items, activeIndex, onAfterClick, syncScroll }: TocNavProps) {
   const navRef = useRef<HTMLElement>(null);
-  const activeRef = useRef<HTMLAnchorElement>(null);
 
+  // Sync-scroll: keep active item centered in the TOC nav
   useEffect(() => {
-    if (!autoScroll || !activeRef.current || !navRef.current) return;
+    if (!syncScroll || !navRef.current) return;
     const nav = navRef.current;
-    const active = activeRef.current;
-    const navRect = nav.getBoundingClientRect();
-    const activeRect = active.getBoundingClientRect();
-    if (activeRect.top < navRect.top || activeRect.bottom > navRect.bottom) {
-      active.scrollIntoView({ block: "center", behavior: "smooth" });
+    const children = nav.children;
+    if (activeIndex < 0 || activeIndex >= children.length) return;
+
+    const activeEl = children[activeIndex] as HTMLElement;
+    const navHeight = nav.clientHeight;
+    const targetScrollTop = activeEl.offsetTop - navHeight / 2 + activeEl.clientHeight / 2;
+
+    nav.scrollTo({ top: Math.max(0, targetScrollTop), behavior: "smooth" });
+  }, [activeIndex, syncScroll]);
+
+  function handleClick(item: TocItem) {
+    const el = findHeadingElement(item);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Update URL hash
+      if (item.id) {
+        window.history.pushState(null, "", `#${item.id}`);
+      }
     }
-  }, [activeId, autoScroll]);
+    onAfterClick?.();
+  }
 
   return (
     <nav
       ref={navRef}
       className="border-l border-[var(--border)] max-h-[calc(100vh-14rem)] overflow-y-auto"
+      style={{ scrollBehavior: "smooth" }}
     >
-      {items.map((item) => {
-        const isActive = activeId === item.id;
+      {items.map((item, i) => {
+        const isActive = i === activeIndex;
         return (
-          <a
-            key={item.id}
-            ref={isActive ? activeRef : undefined}
-            href={`#${item.id}`}
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToHeading(item.id);
-              window.history.pushState(null, "", `#${item.id}`);
-              onAfterClick?.();
-            }}
+          <button
+            key={`${item.id}-${i}`}
+            type="button"
+            onClick={() => handleClick(item)}
             className={cn(
-              "block py-1.5 text-sm border-l-2 -ml-px cursor-pointer transition-all duration-200",
+              "block w-full text-left py-1.5 text-sm border-l-2 -ml-px cursor-pointer transition-all duration-200",
               item.level === 2 && "pl-3",
               item.level === 3 && "pl-6",
               isActive
@@ -118,7 +139,7 @@ function TocNav({ items, activeId, onAfterClick, autoScroll }: TocNavProps) {
             )}
           >
             {item.text}
-          </a>
+          </button>
         );
       })}
     </nav>
@@ -132,7 +153,7 @@ export function DesktopTOC({
   items: TocItem[];
   tocLabel: string;
 }) {
-  const activeId = useActiveHeading(items);
+  const activeIndex = useActiveHeading(items);
   const progress = useReadingProgress();
 
   if (items.length === 0) return null;
@@ -153,7 +174,7 @@ export function DesktopTOC({
           style={{ width: `${progress}%` }}
         />
       </div>
-      <TocNav items={items} activeId={activeId} autoScroll />
+      <TocNav items={items} activeIndex={activeIndex} syncScroll />
     </aside>
   );
 }
@@ -166,7 +187,7 @@ export function MobileTOC({
   tocLabel: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const activeId = useActiveHeading(items);
+  const activeIndex = useActiveHeading(items);
   const close = useCallback(() => setIsOpen(false), []);
 
   if (items.length === 0) return null;
@@ -182,7 +203,7 @@ export function MobileTOC({
       </button>
       {isOpen && (
         <div className="mt-3">
-          <TocNav items={items} activeId={activeId} onAfterClick={close} />
+          <TocNav items={items} activeIndex={activeIndex} onAfterClick={close} />
         </div>
       )}
     </div>
