@@ -10,40 +10,34 @@ export interface TocItem {
   level: number;
 }
 
-/** Scroll-based active heading detection — much more reliable than IntersectionObserver */
 function useActiveHeading(items: TocItem[]) {
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
     if (items.length === 0) return;
 
-    const OFFSET = 100; // px from top to consider "active"
-
     function onScroll() {
-      // Find the last heading whose top is above the offset line
-      let current = "";
+      const OFFSET = 120;
+      let current = items[0]?.id ?? "";
+
+      // Walk all headings, pick the last one whose top is above the offset
       for (const item of items) {
         const el = document.getElementById(item.id);
         if (!el) continue;
-        const top = el.getBoundingClientRect().top;
-        if (top <= OFFSET) {
+        if (el.getBoundingClientRect().top <= OFFSET) {
           current = item.id;
-        } else {
-          break; // headings are in document order, no need to check further
         }
       }
 
-      // If we're at the very top (before any heading), highlight the first item
-      if (!current && items.length > 0) {
-        current = items[0].id;
+      // If scrolled to bottom, activate last item
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 50) {
+        current = items[items.length - 1].id;
       }
 
       setActiveId(current);
     }
 
-    // Run once immediately
     onScroll();
-
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [items]);
@@ -51,26 +45,27 @@ function useActiveHeading(items: TocItem[]) {
   return activeId;
 }
 
-/** Track article reading progress (0–100) */
 function useReadingProgress() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     function onScroll() {
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (docHeight <= 0) {
-        setProgress(100);
-        return;
-      }
+      if (docHeight <= 0) return setProgress(100);
       setProgress(Math.min(100, Math.round((window.scrollY / docHeight) * 100)));
     }
-
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return progress;
+}
+
+function scrollToHeading(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 interface TocNavProps {
@@ -84,33 +79,22 @@ function TocNav({ items, activeId, onAfterClick, autoScroll }: TocNavProps) {
   const navRef = useRef<HTMLElement>(null);
   const activeRef = useRef<HTMLAnchorElement>(null);
 
-  // Auto-scroll the TOC sidebar to keep the active item visible
   useEffect(() => {
     if (!autoScroll || !activeRef.current || !navRef.current) return;
     const nav = navRef.current;
     const active = activeRef.current;
     const navRect = nav.getBoundingClientRect();
     const activeRect = active.getBoundingClientRect();
-
-    // If active item is outside visible area of the nav, scroll it into view
     if (activeRect.top < navRect.top || activeRect.bottom > navRect.bottom) {
       active.scrollIntoView({ block: "center", behavior: "smooth" });
     }
   }, [activeId, autoScroll]);
 
-  function handleClick(e: React.MouseEvent, id: string) {
-    e.preventDefault();
-    const el = document.getElementById(id);
-    if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: "smooth" });
-      window.history.pushState(null, "", `#${id}`);
-    }
-    onAfterClick?.();
-  }
-
   return (
-    <nav ref={navRef} className="border-l border-[var(--border)] max-h-[calc(100vh-14rem)] overflow-y-auto scrollbar-thin">
+    <nav
+      ref={navRef}
+      className="border-l border-[var(--border)] max-h-[calc(100vh-14rem)] overflow-y-auto"
+    >
       {items.map((item) => {
         const isActive = activeId === item.id;
         return (
@@ -118,13 +102,19 @@ function TocNav({ items, activeId, onAfterClick, autoScroll }: TocNavProps) {
             key={item.id}
             ref={isActive ? activeRef : undefined}
             href={`#${item.id}`}
-            onClick={(e) => handleClick(e, item.id)}
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToHeading(item.id);
+              window.history.pushState(null, "", `#${item.id}`);
+              onAfterClick?.();
+            }}
             className={cn(
-              "block py-1.5 pl-3 text-sm border-l -ml-px transition-all duration-200",
+              "block py-1.5 text-sm border-l-2 -ml-px cursor-pointer transition-all duration-200",
+              item.level === 2 && "pl-3",
               item.level === 3 && "pl-6",
               isActive
-                ? "text-accent border-accent font-medium"
-                : "text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)]"
+                ? "border-accent text-accent font-semibold bg-accent/5"
+                : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-accent/40"
             )}
           >
             {item.text}
@@ -149,12 +139,13 @@ export function DesktopTOC({
 
   return (
     <aside className="hidden lg:block sticky top-24 w-56 shrink-0 self-start">
-      {/* Reading progress */}
       <div className="mb-3 flex items-center gap-2">
         <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
           {tocLabel}
         </p>
-        <span className="text-[10px] tabular-nums text-accent/70">{progress}%</span>
+        <span className="text-[10px] tabular-nums text-accent/70">
+          {progress}%
+        </span>
       </div>
       <div className="h-0.5 rounded-full bg-[var(--border)] mb-3 overflow-hidden">
         <div
