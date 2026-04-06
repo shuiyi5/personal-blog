@@ -10,7 +10,7 @@ export const mockProjects: Project[] = [
     tags: ["Notion", "产品分析", "模板"],
     cover: undefined,
     link: undefined,
-    github: "https://github.com/sentoe/ai-product-analysis",
+    github: "https://github.com/shuiyi5/ai-product-analysis",
     order: 1,
   },
   {
@@ -23,7 +23,7 @@ export const mockProjects: Project[] = [
     tags: ["Notion", "Product Analysis", "Template"],
     cover: undefined,
     link: undefined,
-    github: "https://github.com/sentoe/ai-product-analysis",
+    github: "https://github.com/shuiyi5/ai-product-analysis",
     order: 1,
   },
   {
@@ -36,7 +36,7 @@ export const mockProjects: Project[] = [
     tags: ["Python", "LLM", "Streamlit", "NLP"],
     cover: undefined,
     link: "https://doc-summarizer.demo.com",
-    github: "https://github.com/sentoe/doc-summarizer",
+    github: "https://github.com/shuiyi5/doc-summarizer",
     order: 2,
   },
   {
@@ -49,7 +49,7 @@ export const mockProjects: Project[] = [
     tags: ["Python", "LLM", "Streamlit", "NLP"],
     cover: undefined,
     link: "https://doc-summarizer.demo.com",
-    github: "https://github.com/sentoe/doc-summarizer",
+    github: "https://github.com/shuiyi5/doc-summarizer",
     order: 2,
   },
   {
@@ -61,7 +61,7 @@ export const mockProjects: Project[] = [
     tags: ["Next.js", "Tailwind CSS", "Notion API", "Vercel"],
     cover: undefined,
     link: "https://sentoe.vercel.app",
-    github: "https://github.com/sentoe/blog",
+    github: "https://github.com/shuiyi5/personal-blog",
     order: 3,
   },
   {
@@ -74,7 +74,7 @@ export const mockProjects: Project[] = [
     tags: ["Next.js", "Tailwind CSS", "Notion API", "Vercel"],
     cover: undefined,
     link: "https://sentoe.vercel.app",
-    github: "https://github.com/sentoe/blog",
+    github: "https://github.com/shuiyi5/personal-blog",
     order: 3,
   },
 ];

@@ -8,7 +8,7 @@ export const siteConfig = {
 };
 
 export const socialLinks = {
-  github: "https://github.com/sentoe",
+  github: "https://github.com/shuiyi5",
   linkedin: "https://linkedin.com/in/sentoe",
   twitter: "https://x.com/sentoe",
   email: "mailto:sentoe@example.com",
