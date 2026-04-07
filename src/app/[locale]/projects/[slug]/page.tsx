@@ -5,14 +5,12 @@ import { Github, ExternalLink, ArrowLeft } from "lucide-react";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isValidLocale } from "@/lib/utils";
 import { siteConfig } from "@/lib/constants";
-import { getProjectBySlug, getAllProjectSlugs } from "@/lib/data/projects";
+import { getProjectBySlug } from "@/lib/data/projects";
 import { RichContent } from "@/components/blog/content/RichContent";
 import type { Locale } from "@/lib/data/types";
 
-export async function generateStaticParams() {
-  const slugs = await getAllProjectSlugs();
-  return slugs.map(({ slug, locale }) => ({ locale, slug }));
-}
+// Always render dynamically so new Notion slugs work without redeployment
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
