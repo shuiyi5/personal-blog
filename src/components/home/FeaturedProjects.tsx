@@ -113,74 +113,70 @@ export async function FeaturedProjects({ locale, dict }: FeaturedProjectsProps) 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {projects.map((project, i) => {
             const theme = PROJECT_THEMES[i % PROJECT_THEMES.length];
+            const cardInner = (
+              <>
+                {/* Header row: icon + number */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-10 h-10 rounded-xl ${theme.iconBg} flex items-center justify-center ${theme.iconColor}`}>
+                    <theme.Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-mono text-(--text-secondary) opacity-40 tracking-widest">
+                    No.{theme.number}
+                  </span>
+                </div>
+                {/* Name & description */}
+                <h3 className="font-semibold text-(--text-primary) group-hover:text-accent transition-colors duration-300 mb-1.5 leading-snug">
+                  {project.name}
+                </h3>
+                <p className="text-sm text-(--text-secondary) line-clamp-2 leading-relaxed flex-1">
+                  {project.description}
+                </p>
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {project.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-md bg-(--bg-secondary) text-(--text-secondary) border border-(--border)">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                {/* Footer */}
+                <div className="mt-4 pt-3.5 border-t border-(--border) flex items-center justify-between">
+                  <span className="text-[11px] font-mono text-(--text-secondary) opacity-50">
+                    {project.role}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {project.github && (
+                      <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+                        className="w-6 h-6 rounded-md border border-(--border) bg-(--bg-secondary) flex items-center justify-center text-(--text-secondary) hover:text-accent hover:border-accent/30 transition-all duration-200 relative z-10">
+                        <Github size={12} />
+                      </a>
+                    )}
+                    {project.link && (
+                      <a href={project.link} target="_blank" rel="noopener noreferrer" aria-label="Demo"
+                        className="w-6 h-6 rounded-md border border-(--border) bg-(--bg-secondary) flex items-center justify-center text-(--text-secondary) hover:text-accent hover:border-accent/30 transition-all duration-200 relative z-10">
+                        <ExternalLink size={12} />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </>
+            );
             return (
               <ScrollReveal key={project.id} delay={i * 80}>
-                <Link href={`/${locale}/projects/${project.slug}`} className="block h-full">
-                <SpotlightCard
-                  className={`glass-card rounded-2xl p-5 h-full flex flex-col group transition-all duration-500 hover:-translate-y-1 ${theme.glow}`}
-                >
-                  {/* Header row: icon + number */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`w-10 h-10 rounded-xl ${theme.iconBg} flex items-center justify-center ${theme.iconColor}`}>
-                      <theme.Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-[10px] font-mono text-(--text-secondary) opacity-40 tracking-widest">
-                      No.{theme.number}
-                    </span>
-                  </div>
-
-                  {/* Name & description */}
-                  <h3 className="font-semibold text-(--text-primary) group-hover:text-accent transition-colors duration-300 mb-1.5 leading-snug">
-                    {project.name}
-                  </h3>
-                  <p className="text-sm text-(--text-secondary) line-clamp-2 leading-relaxed flex-1">
-                    {project.description}
-                  </p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {project.tags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-md bg-(--bg-secondary) text-(--text-secondary) border border-(--border)"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Footer */}
-                  <div className="mt-4 pt-3.5 border-t border-(--border) flex items-center justify-between">
-                    <span className="text-[11px] font-mono text-(--text-secondary) opacity-50">
-                      {project.role}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="GitHub"
-                          className="w-6 h-6 rounded-md border border-(--border) bg-(--bg-secondary) flex items-center justify-center text-(--text-secondary) hover:text-accent hover:border-accent/30 transition-all duration-200"
-                        >
-                          <Github size={12} />
-                        </a>
-                      )}
-                      {project.link && (
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Demo"
-                          className="w-6 h-6 rounded-md border border-(--border) bg-(--bg-secondary) flex items-center justify-center text-(--text-secondary) hover:text-accent hover:border-accent/30 transition-all duration-200"
-                        >
-                          <ExternalLink size={12} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </SpotlightCard>
-                </Link>
+                {project.slug ? (
+                  <Link
+                    href={`/${locale}/projects/${project.slug}`}
+                    className={`block h-full group transition-all duration-500 hover:-translate-y-1 ${theme.glow}`}
+                  >
+                    <SpotlightCard className={`glass-card rounded-2xl p-5 h-full flex flex-col`}>
+                      {cardInner}
+                    </SpotlightCard>
+                  </Link>
+                ) : (
+                  <SpotlightCard className={`glass-card rounded-2xl p-5 h-full flex flex-col group transition-all duration-500 hover:-translate-y-1 ${theme.glow}`}>
+                    {cardInner}
+                  </SpotlightCard>
+                )}
               </ScrollReveal>
             );
           })}
