@@ -3,6 +3,7 @@ import { socialLinks } from "@/lib/constants";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { HeroBg } from "./HeroBg";
 import { HeroEntrance } from "./HeroEntrance";
+import { HeroParticleCanvas } from "./HeroParticleCanvas";
 
 interface HeroProps {
   dict: Dictionary;
@@ -62,15 +63,11 @@ const socials = [
 export function Hero({ dict }: HeroProps) {
   return (
     <section className="relative w-full min-h-150 overflow-hidden -mt-16 grid-bg">
-      {/* Background */}
+      {/* Particle canvas background */}
+      <HeroParticleCanvas />
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-[#131110]/65" />
       <HeroBg />
-      <div className="absolute inset-0 bg-linear-to-br from-[#131110] via-[#1a1714] to-[#131110]" />
-
-      {/* Subtle warm blobs — 朱 & 金茶 */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="aurora-blob absolute w-150 h-150 rounded-full bg-accent/5 -top-40 -right-20" />
-        <div className="aurora-blob-2 absolute w-100 h-100 rounded-full bg-[#c8a96e]/5 bottom-0 left-[-10%]" />
-      </div>
 
       {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-(--bg) to-transparent z-10" />
