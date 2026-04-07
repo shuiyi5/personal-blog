@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { socialLinks } from "@/lib/constants";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { HeroBg } from "./HeroBg";
+import { LiquidGradientBg } from "./LiquidGradientBg";
 import { HeroEntrance } from "./HeroEntrance";
-import { HeroParticleCanvas } from "./HeroParticleCanvas";
 
 interface HeroProps {
   dict: Dictionary;
 }
 
-/* Inline SVG social icons with hover draw animation */
 function SvgGithub({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -43,16 +41,6 @@ function SvgMail({ size = 14 }: { size?: number }) {
   );
 }
 
-/* Animated "writing" SVG pen icon */
-function SvgPen({ size = 10 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
-    </svg>
-  );
-}
-
 const socials = [
   { href: socialLinks.github, Icon: SvgGithub, label: "GitHub" },
   { href: socialLinks.linkedin, Icon: SvgLinkedin, label: "LinkedIn" },
@@ -61,106 +49,79 @@ const socials = [
 ];
 
 export function Hero({ dict }: HeroProps) {
+  const name = dict.home.greeting.replace(" 👋", "").replace("Hi, I'm ", "").replace("你好，我是", "");
+
   return (
-    <section className="relative w-full min-h-150 overflow-hidden -mt-16 grid-bg">
-      {/* Particle canvas background */}
-      <HeroParticleCanvas />
-      {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-[#131110]/65" />
-      <HeroBg />
+    <section className="relative w-full min-h-screen overflow-hidden -mt-16 flex items-center justify-center">
+      {/* Liquid gradient background */}
+      <LiquidGradientBg />
 
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-(--bg) to-transparent z-10" />
+      {/* Bottom fade to page background */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-(--bg) to-transparent z-10" />
 
-      {/* Content */}
-      <div className="relative z-20 max-w-5xl mx-auto px-6 pt-36 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-12 items-center">
+      {/* Centered content */}
+      <div className="relative z-20 text-center px-6 pt-16 pb-24">
 
-          {/* Left: text */}
-          <div>
-            {/* Status badge */}
-            <HeroEntrance delay={100}>
-              <div className="inline-flex items-center gap-2 mb-7 px-3 py-1.5 rounded-full text-xs font-medium border border-white/8 bg-white/4 backdrop-blur-sm text-white/50">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent dot-pulse" />
-                AI Product Manager &amp; Builder
-              </div>
-            </HeroEntrance>
-
-            {/* Headline */}
-            <HeroEntrance delay={250}>
-              <h1 className="hero-headline text-5xl md:text-6xl lg:text-7xl tracking-tight text-white mb-5 leading-[1.08]">
-                {dict.home.greeting.replace(" 👋", "").replace("Hi, I'm ", "")}
-                <br />
-                <span className="hero-gradient-text">AI 产品探索者</span>
-              </h1>
-            </HeroEntrance>
-
-            {/* Tagline — with 和紙 left-border accent */}
-            <HeroEntrance delay={400}>
-              <p className="text-base text-white/45 max-w-md leading-relaxed mb-9 font-light pl-4 border-l border-accent/40">
-                {dict.home.tagline}
-              </p>
-            </HeroEntrance>
-
-            {/* CTA buttons */}
-            <HeroEntrance delay={550}>
-              <div className="flex items-center gap-3 mb-10">
-                <Link
-                  href="#posts"
-                  className="hero-btn-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white transition-all"
-                >
-                  阅读文章
-                  <span className="text-white/70 transition-transform group-hover:translate-x-0.5">→</span>
-                </Link>
-                <Link
-                  href="#projects"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white/60 border border-white/10 hover:border-accent/30 hover:text-white/80 transition-all duration-300 backdrop-blur-sm"
-                >
-                  查看项目
-                </Link>
-              </div>
-            </HeroEntrance>
-
-            {/* Social icons */}
-            <HeroEntrance delay={700}>
-              <div className="flex items-center gap-2">
-                {socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target={s.href.startsWith("mailto") ? undefined : "_blank"}
-                    rel="noopener noreferrer"
-                    aria-label={s.label}
-                    className="w-8 h-8 rounded-lg border border-white/8 bg-white/4 flex items-center justify-center text-white/35 hover:text-accent hover:border-accent/25 hover:bg-accent/8 transition-all duration-300"
-                  >
-                    <s.Icon size={14} />
-                  </a>
-                ))}
-              </div>
-            </HeroEntrance>
+        {/* Status badge */}
+        <HeroEntrance delay={100}>
+          <div className="inline-flex items-center gap-2 mb-8 px-3 py-1.5 rounded-full text-xs font-medium border border-white/12 bg-white/6 backdrop-blur-sm text-white/55">
+            <span className="w-1.5 h-1.5 rounded-full dot-pulse dot-sakura" />
+            AI Product Manager &amp; Builder
           </div>
+        </HeroEntrance>
 
-          {/* Right: avatar */}
-          <HeroEntrance delay={350}>
-            <div className="relative hidden md:block">
-              <div className="hero-avatar-frame hero-avatar-bg w-48 h-48 rounded-2xl border border-white/8 overflow-hidden relative">
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-40">
-                  <div className="w-14 h-14 rounded-full border border-white/15 flex items-center justify-center">
-                    <span className="hero-avatar-name text-2xl text-white/60">水</span>
-                  </div>
-                  <span className="text-[10px] text-white/30 font-mono tracking-wider">avatar</span>
-                </div>
-                <div className="absolute inset-0 bg-linear-to-br from-accent/5 via-transparent to-[#c8a96e]/5" />
-              </div>
+        {/* Headline */}
+        <HeroEntrance delay={250}>
+          <h1 className="hero-headline text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight text-white mb-4 leading-[1.02]">
+            {name}
+            <br />
+            <span className="hero-gradient-text">AI 产品探索者</span>
+          </h1>
+        </HeroEntrance>
 
-              {/* Floating badge — 金茶 */}
-              <div className="absolute -bottom-3 -right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-accent/20 bg-[#131110]/90 backdrop-blur-sm text-[11px] font-mono text-[#c8a96e]">
-                <SvgPen size={10} />
-                writing
-              </div>
-            </div>
-          </HeroEntrance>
-        </div>
+        {/* Tagline */}
+        <HeroEntrance delay={400}>
+          <p className="text-base text-white/45 max-w-sm mx-auto leading-relaxed mb-10 font-light">
+            {dict.home.tagline}
+          </p>
+        </HeroEntrance>
+
+        {/* CTA buttons */}
+        <HeroEntrance delay={550}>
+          <div className="flex items-center justify-center gap-3 mb-10">
+            <Link
+              href="#posts"
+              className="hero-btn-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white transition-all"
+            >
+              阅读文章
+              <span className="transition-transform">→</span>
+            </Link>
+            <Link
+              href="#projects"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white/60 border border-white/12 hover:border-[#FFB7C5]/40 hover:text-white/85 transition-all duration-300 backdrop-blur-sm"
+            >
+              查看项目
+            </Link>
+          </div>
+        </HeroEntrance>
+
+        {/* Social icons */}
+        <HeroEntrance delay={700}>
+          <div className="flex items-center justify-center gap-2">
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target={s.href.startsWith("mailto") ? undefined : "_blank"}
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-white/35 hover:text-[#FFB7C5] hover:border-[#FFB7C5]/30 hover:bg-[#FFB7C5]/8 transition-all duration-300"
+              >
+                <s.Icon size={14} />
+              </a>
+            ))}
+          </div>
+        </HeroEntrance>
       </div>
     </section>
   );

@@ -339,18 +339,18 @@ body {
   font-family: var(--font-dm-serif), Georgia, serif;
 }
 .hero-gradient-text {
-  background: linear-gradient(135deg, #e05a3a 0%, #c8a96e 60%, #7a9e8e 100%);
+  background: linear-gradient(135deg, #FFCCD5 0%, #FF8FA3 45%, #C84078 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .hero-btn-primary {
-  background: #c43b1e;
-  box-shadow: 0 0 0 1px rgba(196,59,30,0.4), 0 4px 20px rgba(196,59,30,0.2);
+  background: #C84078;
+  box-shadow: 0 0 0 1px rgba(200,64,120,0.4), 0 4px 20px rgba(200,64,120,0.25);
 }
 .hero-btn-primary:hover {
-  background: #d4553a;
-  box-shadow: 0 0 0 1px rgba(196,59,30,0.6), 0 4px 28px rgba(196,59,30,0.35);
+  background: #d95088;
+  box-shadow: 0 0 0 1px rgba(200,64,120,0.6), 0 4px 28px rgba(200,64,120,0.4);
 }
 .hero-avatar-bg {
   background: linear-gradient(135deg, rgba(196,59,30,0.08), rgba(200,169,110,0.06), rgba(122,158,142,0.08));
@@ -393,4 +393,71 @@ body {
 }
 .dot-pulse {
   animation: dot-pulse 2s ease-in-out infinite;
+}
+.dot-sakura {
+  background: #FFB7C5;
+}
+
+/* ─── Liquid Gradient Background ─── */
+.liquid-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+}
+.orb-sk-1 {
+  width: 80vw;
+  height: 80vw;
+  top: -30%;
+  right: -15%;
+  background: radial-gradient(circle at center, #FF8FA3 0%, #E05080 45%, transparent 70%);
+  opacity: 0.75;
+  animation: orb-sk-1 25s ease-in-out infinite alternate;
+}
+.orb-sk-2 {
+  width: 70vw;
+  height: 70vw;
+  bottom: -25%;
+  left: -20%;
+  background: radial-gradient(circle at center, #C03060 0%, #8B1A45 45%, transparent 70%);
+  opacity: 0.85;
+  animation: orb-sk-2 32s ease-in-out infinite alternate;
+}
+.orb-sk-3 {
+  width: 55vw;
+  height: 55vw;
+  top: 25%;
+  left: 25%;
+  background: radial-gradient(circle at center, #C880CC 0%, #8840A0 45%, transparent 70%);
+  opacity: 0.55;
+  animation: orb-sk-3 20s ease-in-out infinite alternate;
+}
+.orb-sk-4 {
+  width: 50vw;
+  height: 50vw;
+  top: 10%;
+  left: 8%;
+  background: radial-gradient(circle at center, #FFD0DC 0%, #FFB0C0 45%, transparent 70%);
+  opacity: 0.4;
+  animation: orb-sk-4 28s ease-in-out infinite alternate;
+}
+@keyframes orb-sk-1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-8%, 12%) scale(1.15); }
+  100% { transform: translate(6%, -10%) scale(0.9); }
+}
+@keyframes orb-sk-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(10%, -12%) scale(1.12); }
+  100% { transform: translate(-6%, 8%) scale(1.18); }
+}
+@keyframes orb-sk-3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-10%, 8%) scale(1.08); }
+  100% { transform: translate(8%, -10%) scale(0.94); }
+}
+@keyframes orb-sk-4 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(12%, 10%) scale(1.1); }
+  100% { transform: translate(-8%, -5%) scale(0.92); }
 }
