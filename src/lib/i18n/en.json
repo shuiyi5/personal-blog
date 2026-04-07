@@ -27,7 +27,11 @@
     "title": "Projects",
     "role": "Role",
     "demo": "Demo",
-    "source": "Source"
+    "source": "Source",
+    "visitSite": "Visit Site",
+    "sourceCode": "View Source",
+    "noTranslation": "No Chinese version yet",
+    "readInOther": "阅读中文版"
   },
   "about": {
     "title": "About Me",

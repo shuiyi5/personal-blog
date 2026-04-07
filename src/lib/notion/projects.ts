@@ -1,4 +1,5 @@
 import { notion, PROJECTS_DATABASE_ID } from "./client";
+import { getPageContent } from "./blocks";
 import type { Project, Locale } from "@/lib/data/types";
 import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
@@ -16,7 +17,7 @@ function normalizeLocale(val: string): Locale {
   return "zh";
 }
 
-function extractProjectProps(page: PageObjectResponse): Project {
+function extractProjectMeta(page: PageObjectResponse): Omit<Project, "content"> {
   const props = page.properties;
 
   const nameProp = findProp(props, "Name");
@@ -24,6 +25,12 @@ function extractProjectProps(page: PageObjectResponse): Project {
     nameProp?.type === "title"
       ? nameProp.title.map((t) => t.plain_text).join("")
       : "";
+
+  const slugProp = findProp(props, "Slug");
+  const slug =
+    slugProp?.type === "rich_text"
+      ? slugProp.rich_text.map((t) => t.plain_text).join("")
+      : ""; // empty when Slug field not yet filled in Notion
 
   const descProp = findProp(props, "Description");
   const description =
@@ -73,28 +80,50 @@ function extractProjectProps(page: PageObjectResponse): Project {
   const order =
     orderProp?.type === "number" ? orderProp.number ?? 0 : 0;
 
-  return {
-    id: page.id,
-    name,
-    description,
-    language,
-    role,
-    tags,
-    cover,
-    link,
-    github,
-    order,
-  };
+  return { id: page.id, slug, name, description, language, role, tags, cover, link, github, order };
 }
 
-/** Fetch all projects, filter by locale in code */
-export async function getNotionProjects(locale: Locale): Promise<Project[]> {
-  const response = await notion.databases.query({
-    database_id: PROJECTS_DATABASE_ID,
-  });
+/** Fetch all project pages (metadata only, no content blocks) */
+async function fetchProjectsMeta(): Promise<Omit<Project, "content">[]> {
+  const allPages: PageObjectResponse[] = [];
+  let cursor: string | undefined = undefined;
 
-  return (response.results as PageObjectResponse[])
-    .map(extractProjectProps)
+  do {
+    const response = await notion.databases.query({
+      database_id: PROJECTS_DATABASE_ID,
+      start_cursor: cursor,
+    });
+    allPages.push(...(response.results as PageObjectResponse[]));
+    cursor = response.has_more ? response.next_cursor ?? undefined : undefined;
+  } while (cursor);
+
+  return allPages.map(extractProjectMeta);
+}
+
+export async function getNotionProjects(locale: Locale): Promise<Project[]> {
+  const metas = await fetchProjectsMeta();
+  return metas
     .filter((p) => p.language === locale)
-    .sort((a, b) => a.order - b.order);
+    .sort((a, b) => a.order - b.order)
+    .map((m) => ({ ...m, content: [] })); // list pages don't need content
+}
+
+export async function getNotionProjectBySlug(
+  slug: string,
+  locale: Locale
+): Promise<Project | null> {
+  const metas = await fetchProjectsMeta();
+  const meta = metas.find((p) => p.slug === slug && p.language === locale);
+  if (!meta) return null;
+  const content = await getPageContent(meta.id);
+  return { ...meta, content };
+}
+
+export async function getAllNotionProjectSlugs(): Promise<
+  { slug: string; locale: Locale }[]
+> {
+  const metas = await fetchProjectsMeta();
+  return metas
+    .filter((p) => p.slug.length > 0)
+    .map((p) => ({ slug: p.slug, locale: p.language }));
 }

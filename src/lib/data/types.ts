@@ -24,6 +24,7 @@ export interface Post {
 
 export interface Project {
   id: string;
+  slug: string;
   name: string;
   description: string;
   language: Locale;
@@ -33,6 +34,7 @@ export interface Project {
   link?: string;
   github?: string;
   order: number;
+  content: ContentBlock[];
 }
 
 export type GalleryItemType = "Image" | "Music" | "Video" | "Design";

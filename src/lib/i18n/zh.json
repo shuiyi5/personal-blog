@@ -27,7 +27,11 @@
     "title": "项目",
     "role": "角色",
     "demo": "演示",
-    "source": "源码"
+    "source": "源码",
+    "visitSite": "访问项目",
+    "sourceCode": "查看源码",
+    "noTranslation": "暂无英文版",
+    "readInOther": "Read in English"
   },
   "about": {
     "title": "关于我",

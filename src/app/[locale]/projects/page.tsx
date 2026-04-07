@@ -45,7 +45,7 @@ export default async function ProjectsPage({
       <h1 className="text-3xl font-bold mb-8">{dict.projects.title}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} dict={dict} />
+          <ProjectCard key={project.id} project={project} dict={dict} locale={locale as Locale} />
         ))}
       </div>
     </div>

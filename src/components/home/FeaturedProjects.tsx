@@ -115,6 +115,7 @@ export async function FeaturedProjects({ locale, dict }: FeaturedProjectsProps) 
             const theme = PROJECT_THEMES[i % PROJECT_THEMES.length];
             return (
               <ScrollReveal key={project.id} delay={i * 80}>
+                <Link href={`/${locale}/projects/${project.slug}`} className="block h-full">
                 <SpotlightCard
                   className={`glass-card rounded-2xl p-5 h-full flex flex-col group transition-all duration-500 hover:-translate-y-1 ${theme.glow}`}
                 >
@@ -179,6 +180,7 @@ export async function FeaturedProjects({ locale, dict }: FeaturedProjectsProps) 
                     </div>
                   </div>
                 </SpotlightCard>
+                </Link>
               </ScrollReveal>
             );
           })}

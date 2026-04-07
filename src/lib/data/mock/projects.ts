@@ -3,6 +3,7 @@ import type { Project } from "../types";
 export const mockProjects: Project[] = [
   {
     id: "p1",
+    slug: "ai-product-analysis",
     name: "AI 产品竞品分析框架",
     description: "基于 Notion 构建的标准化 AI 产品竞品分析模板和方法论工具包",
     language: "zh",
@@ -12,12 +13,28 @@ export const mockProjects: Project[] = [
     link: undefined,
     github: "https://github.com/shuiyi5/ai-product-analysis",
     order: 1,
+    content: [
+      { type: "heading", level: 1, text: "AI 产品竞品分析框架", id: "title" },
+      { type: "paragraph", text: "这是一套基于 Notion 构建的标准化 AI 产品竞品分析方法论工具包，帮助产品经理系统性地拆解、对比和评估 AI 产品。" },
+      { type: "heading", level: 2, text: "项目背景", id: "background" },
+      { type: "paragraph", text: "市面上 AI 产品迭代速度极快，缺乏一套结构化的分析框架往往导致竞品分析浅尝辄止。本框架从产品定位、核心能力、商业模式、用户体验四个维度出发，构建可复用的分析模板。" },
+      { type: "heading", level: 2, text: "核心模块", id: "modules" },
+      { type: "bulleted_list", items: [
+        "产品定位矩阵：市场定位 × 用户群体的二维分析",
+        "能力雷达图：从准确性、速度、成本、定制性等维度打分",
+        "商业模式画布：适配 AI 产品的精简版 BMC",
+        "UX 摩擦点清单：基于用户旅程的体验问题归纳"
+      ]},
+      { type: "heading", level: 2, text: "使用方式", id: "usage" },
+      { type: "paragraph", text: "将 Notion 模板 Duplicate 到自己的工作区，按照每个模块的指引填写分析内容。框架内置了示例分析（以 ChatGPT vs Claude 为例），可作为填写参考。" },
+      { type: "callout", emoji: "💡", text: "建议将分析结果与团队共享，定期（每季度）更新竞品动态，形成持续追踪的竞品情报库。" },
+    ],
   },
   {
     id: "p2",
+    slug: "ai-product-analysis",
     name: "AI Product Competitive Analysis Framework",
-    description:
-      "A standardized AI product competitive analysis template and methodology toolkit built with Notion",
+    description: "A standardized AI product competitive analysis template and methodology toolkit built with Notion",
     language: "en",
     role: "Product Design & Methodology",
     tags: ["Notion", "Product Analysis", "Template"],
@@ -25,12 +42,28 @@ export const mockProjects: Project[] = [
     link: undefined,
     github: "https://github.com/shuiyi5/ai-product-analysis",
     order: 1,
+    content: [
+      { type: "heading", level: 1, text: "AI Product Competitive Analysis Framework", id: "title" },
+      { type: "paragraph", text: "A structured Notion-based methodology toolkit for product managers to systematically deconstruct, compare, and evaluate AI products." },
+      { type: "heading", level: 2, text: "Background", id: "background" },
+      { type: "paragraph", text: "The AI product landscape evolves rapidly, and without a structured framework, competitive analysis tends to remain shallow. This framework analyzes products across four dimensions: positioning, core capabilities, business model, and user experience." },
+      { type: "heading", level: 2, text: "Core Modules", id: "modules" },
+      { type: "bulleted_list", items: [
+        "Positioning Matrix: 2D analysis of market position × target user segments",
+        "Capability Radar: Scoring across accuracy, speed, cost, and customizability",
+        "Business Model Canvas: A lean BMC adapted for AI products",
+        "UX Friction Checklist: Experience issues mapped to user journey stages"
+      ]},
+      { type: "heading", level: 2, text: "How to Use", id: "usage" },
+      { type: "paragraph", text: "Duplicate the Notion template to your workspace and follow the guided prompts in each module. A sample analysis (ChatGPT vs Claude) is included as a reference." },
+      { type: "callout", emoji: "💡", text: "Share analysis results with your team and update competitive intelligence quarterly to build a living competitor database." },
+    ],
   },
   {
     id: "p3",
+    slug: "doc-summarizer",
     name: "智能文档摘要助手",
-    description:
-      "基于 LLM API 的文档智能摘要工具，支持 PDF、网页等多种格式输入",
+    description: "基于 LLM API 的文档智能摘要工具，支持 PDF、网页等多种格式输入",
     language: "zh",
     role: "全栈开发 & 产品设计",
     tags: ["Python", "LLM", "Streamlit", "NLP"],
@@ -38,12 +71,28 @@ export const mockProjects: Project[] = [
     link: "https://doc-summarizer.demo.com",
     github: "https://github.com/shuiyi5/doc-summarizer",
     order: 2,
+    content: [
+      { type: "heading", level: 1, text: "智能文档摘要助手", id: "title" },
+      { type: "paragraph", text: "一款基于大语言模型 API 构建的文档摘要工具，支持 PDF、网页 URL、纯文本等多种输入方式，自动生成结构化摘要。" },
+      { type: "heading", level: 2, text: "技术架构", id: "architecture" },
+      { type: "paragraph", text: "项目采用 Python + Streamlit 构建前端界面，后端调用 OpenAI API 进行文本处理，使用 LangChain 处理长文本分块和上下文管理。" },
+      { type: "heading", level: 2, text: "核心功能", id: "features" },
+      { type: "bulleted_list", items: [
+        "多格式输入：PDF 文件、网页链接、纯文本粘贴",
+        "摘要模式：可选执行摘要、要点提取、问答模式",
+        "输出控制：自定义摘要长度和格式（Markdown / 纯文本）",
+        "历史记录：本地缓存，支持对比不同文档的摘要"
+      ]},
+      { type: "heading", level: 2, text: "设计思考", id: "design" },
+      { type: "paragraph", text: "在产品设计上，重点解决了「摘要太泛」的痛点——通过引导用户设定摘要目的（如：投资分析、技术评估、学习笔记），让 LLM 生成更有针对性的内容。" },
+      { type: "callout", emoji: "🔧", text: "当前版本为 MVP，计划后续接入本地模型（Ollama）以支持隐私文档的离线处理。" },
+    ],
   },
   {
     id: "p4",
+    slug: "doc-summarizer",
     name: "Smart Document Summarizer",
-    description:
-      "An LLM-powered document summarization tool supporting PDF, web pages, and multiple input formats",
+    description: "An LLM-powered document summarization tool supporting PDF, web pages, and multiple input formats",
     language: "en",
     role: "Full-stack Dev & Product Design",
     tags: ["Python", "LLM", "Streamlit", "NLP"],
@@ -51,11 +100,28 @@ export const mockProjects: Project[] = [
     link: "https://doc-summarizer.demo.com",
     github: "https://github.com/shuiyi5/doc-summarizer",
     order: 2,
+    content: [
+      { type: "heading", level: 1, text: "Smart Document Summarizer", id: "title" },
+      { type: "paragraph", text: "An LLM-powered summarization tool that accepts PDFs, web URLs, and plain text, then generates structured summaries automatically." },
+      { type: "heading", level: 2, text: "Architecture", id: "architecture" },
+      { type: "paragraph", text: "Built with Python + Streamlit for the UI, calling the OpenAI API for text processing, and using LangChain for long-document chunking and context management." },
+      { type: "heading", level: 2, text: "Key Features", id: "features" },
+      { type: "bulleted_list", items: [
+        "Multi-format input: PDF files, web links, plain text paste",
+        "Summary modes: Executive summary, bullet-point extraction, Q&A mode",
+        "Output control: Customizable length and format (Markdown / plain text)",
+        "History: Local cache with side-by-side document comparison"
+      ]},
+      { type: "heading", level: 2, text: "Design Thinking", id: "design" },
+      { type: "paragraph", text: "The core design challenge was tackling vague summaries. By prompting users to define the summary purpose (e.g., investment analysis, technical review, study notes), the tool produces significantly more targeted output." },
+      { type: "callout", emoji: "🔧", text: "Current version is MVP. Planning to integrate local models (Ollama) for offline processing of sensitive documents." },
+    ],
   },
   {
     id: "p5",
+    slug: "personal-blog",
     name: "个人博客网站",
-    description: "基于 Next.js + Notion 的中英双语个人博客，你正在看的就是这个项目",
+    description: "基于 Next.js + Notion 的中英双语个人博客，以 Notion 作为全站无代码 CMS，部署在 Vercel",
     language: "zh",
     role: "设计 & 全栈开发",
     tags: ["Next.js", "Tailwind CSS", "Notion API", "Vercel"],
@@ -63,12 +129,34 @@ export const mockProjects: Project[] = [
     link: "https://sentoe.vercel.app",
     github: "https://github.com/shuiyi5/personal-blog",
     order: 3,
+    content: [
+      { type: "heading", level: 1, text: "个人博客网站", id: "title" },
+      { type: "paragraph", text: "你正在访问的就是这个项目。基于 Next.js 14 App Router + Notion API 构建的中英双语个人博客，Notion 作为无代码 CMS 管理文章和项目内容。" },
+      { type: "heading", level: 2, text: "技术选型", id: "stack" },
+      { type: "bulleted_list", items: [
+        "框架：Next.js 14（App Router + ISR）",
+        "样式：Tailwind CSS v4 + 自定义 CSS 变量主题系统",
+        "CMS：Notion API（文章、项目、图库三个数据库）",
+        "字体：DM Serif Display（标题）+ Quicksand（正文）",
+        "部署：Vercel（Webhook 触发 ISR 重新验证）"
+      ]},
+      { type: "heading", level: 2, text: "设计系统", id: "design" },
+      { type: "paragraph", text: "采用日系侘寂美学，以墨黑为背景色，朱红为强调色，配合金茶、青磁等辅助色构成完整的色彩系统。亮色模式使用和纸质感的暖白底色。" },
+      { type: "heading", level: 2, text: "技术亮点", id: "highlights" },
+      { type: "bulleted_list", items: [
+        "ISR + Notion Webhook：内容更新后自动触发页面重新生成，无需手动部署",
+        "双语路由：基于 [locale] 动态路由实现 /zh 和 /en 完全独立的内容体系",
+        "内容块渲染：将 Notion Block API 映射为自定义 React 组件，支持 10+ 种内容类型",
+        "暗/亮模式：基于 Cookie 存储主题偏好，SSR 阶段即可读取，无闪烁"
+      ]},
+      { type: "callout", emoji: "📝", text: "本博客同时也是内容创作平台，所有文章、项目介绍均在 Notion 中撰写，通过 API 同步展示。" },
+    ],
   },
   {
     id: "p6",
+    slug: "personal-blog",
     name: "Personal Blog",
-    description:
-      "A bilingual personal blog built with Next.js + Notion — you're looking at it right now",
+    description: "A bilingual personal blog built with Next.js + Notion — you're looking at it right now",
     language: "en",
     role: "Design & Full-stack Dev",
     tags: ["Next.js", "Tailwind CSS", "Notion API", "Vercel"],
@@ -76,5 +164,27 @@ export const mockProjects: Project[] = [
     link: "https://sentoe.vercel.app",
     github: "https://github.com/shuiyi5/personal-blog",
     order: 3,
+    content: [
+      { type: "heading", level: 1, text: "Personal Blog", id: "title" },
+      { type: "paragraph", text: "The site you're currently browsing. A bilingual (zh/en) personal blog built with Next.js 14 App Router + Notion API, using Notion as a no-code CMS for articles and projects." },
+      { type: "heading", level: 2, text: "Tech Stack", id: "stack" },
+      { type: "bulleted_list", items: [
+        "Framework: Next.js 14 (App Router + ISR)",
+        "Styles: Tailwind CSS v4 + custom CSS variable theme system",
+        "CMS: Notion API (three databases: posts, projects, gallery)",
+        "Fonts: DM Serif Display (headings) + Quicksand (body)",
+        "Deployment: Vercel with Webhook-triggered ISR revalidation"
+      ]},
+      { type: "heading", level: 2, text: "Design System", id: "design" },
+      { type: "paragraph", text: "Inspired by Japanese wabi-sabi aesthetics: ink black background, vermillion accent (#c43b1e), with gold and sage as supporting colors. Light mode uses a warm washi paper white." },
+      { type: "heading", level: 2, text: "Technical Highlights", id: "highlights" },
+      { type: "bulleted_list", items: [
+        "ISR + Notion Webhook: Content updates auto-trigger page regeneration without redeployment",
+        "Bilingual routing: [locale] dynamic routes deliver fully independent zh and en content trees",
+        "Content block renderer: Maps Notion Block API to custom React components, supporting 10+ block types",
+        "Dark/light mode: Theme preference stored in cookies, read at SSR time — no flash of unstyled content"
+      ]},
+      { type: "callout", emoji: "📝", text: "This blog also serves as a content creation platform — all articles and project descriptions are written in Notion and synced via API." },
+    ],
   },
 ];
